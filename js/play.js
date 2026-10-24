@@ -11,17 +11,16 @@
   const HOST_ID = 'petitjuego-' + CODE;
   const head = $('#padhead'), body = $('#padbody'), dot = $('#conn'), connmsg = $('#connmsg');
 
-  let peer = null, conn = null, seat = null, names = ['Steven', 'Jade', 'Lionel'], scores = [0, 0, 0];
+  let peer = null, conn = null, seat = null, names = ['', '', ''], scores = [0, 0, 0];
+  let myName = sessionStorage.getItem('pj_name_' + CODE) || '';
   let current = null; // prompt en cours
   const token = sessionStorage.getItem('pj_token') || (Math.random().toString(36).slice(2, 10));
   sessionStorage.setItem('pj_token', token);
-  const savedSeat = sessionStorage.getItem('pj_seat_' + CODE);
-  if (savedSeat !== null && savedSeat !== '') seat = +savedSeat;
 
   function setConn(on, msg) { dot.classList.toggle('on', on); connmsg.textContent = msg; }
   function render(html) { body.innerHTML = `<div class="screen-in stack grow">${html}</div>`; window.scrollTo(0, 0); }
   function renderHead() {
-    head.innerHTML = seat === null ? `<div class="px sm muted">PETIT JUEGO · salle ${esc(CODE)}</div>` : `${avatar(seat)}<div class="nm c${seat}">${esc(names[seat])}</div><div class="sc">${scores[seat]} PTS</div>`;
+    head.innerHTML = seat === null ? `<div class="px sm muted">PETIT JUEGO · salle ${esc(CODE)}</div>` : `${avatar(seat)}<div class="nm c${seat}">${esc(names[seat] || myName)}</div><div class="sc">${scores[seat]} PTS</div>`;
   }
   function send(msg) { if (conn && conn.open) conn.send(msg); }
   function shake(el) { (el || body).classList.remove('shake'); void (el || body).offsetWidth; (el || body).classList.add('shake'); SFX.fail(); }
@@ -42,7 +41,7 @@
     peer = new Peer(undefined, peerOpts());
     peer.on('open', () => {
       conn = peer.connect(HOST_ID, { reliable: true, metadata: { token } });
-      conn.on('open', () => { setConn(true, 'connecté · salle ' + CODE); send({ t: 'join', seat, token }); });
+      conn.on('open', () => { setConn(true, 'connecté · salle ' + CODE); if (myName) send({ t: 'join', name: myName, token }); else if (!$('#nm')) nameScreen(); });
       conn.on('data', onData);
       conn.on('close', () => { setConn(false, 'déconnecté, je réessaie…'); setTimeout(connect, 2000); });
       conn.on('error', () => { setConn(false, 'erreur, je réessaie…'); setTimeout(connect, 2500); });
@@ -63,22 +62,28 @@
     if (m.names) names = m.names;
     if (m.scores) scores = m.scores;
     switch (m.t) {
-      case 'lobby': if (seat === null) seatPicker(m.taken || []); renderHead(); break;
+      case 'lobby': if (seat === null && !myName && !$('#nm')) nameScreen(); renderHead(); break;
       case 'seat':
-        if (m.ok) { seat = m.seat; sessionStorage.setItem('pj_seat_' + CODE, seat); SFX.join(); renderHead(); if (!current) waitScreen('TU ES DANS LA PLACE', 'Regarde l\'écran, ça va commencer.'); }
-        else { seat = null; sessionStorage.removeItem('pj_seat_' + CODE); seatPicker(m.taken || []); shake(); }
+        if (m.ok) { seat = m.seat; sessionStorage.setItem('pj_name_' + CODE, myName); SFX.join(); renderHead(); if (!current) waitScreen('TU ES DANS LA PLACE', 'Regarde l\'écran, ça va commencer.'); }
+        else { seat = null; myName = ''; sessionStorage.removeItem('pj_name_' + CODE); nameScreen(m.reason); shake(); }
         break;
       case 'prompt': current = m; renderHead(); prompt(m); break;
       case 'clear': current = null; waitScreen(m.title || 'REGARDE L\'ÉCRAN', m.msg || ''); break;
       case 'score': renderHead(); break;
+      case 'kick': seat = null; myName = ''; current = null; sessionStorage.removeItem('pj_name_' + CODE); renderHead(); nameScreen(m.msg); break;
     }
   }
 
-  function seatPicker(taken) {
-    render(`<div class="ptitle">Qui es-tu ?</div><div class="psub">SALLE ${esc(CODE)}</div>
-      <div class="stack seatpick">${[0, 1, 2].map(i => `<button class="btn pbtn c${i} ${taken.includes(i) ? 'taken' : ''}" data-seat="${i}">${avatar(i)}<span>${esc(names[i])}</span><span class="me">${taken.includes(i) ? 'PRIS' : ''}</span></button>`).join('')}</div>
-      <div class="ins">Si ton prénom n'est pas là, Steven peut le changer sur l'écran (⚙️).</div>`);
-    $$('[data-seat]').forEach(b => b.onclick = () => { SFX.select(); send({ t: 'join', seat: +b.dataset.seat, token }); });
+  function nameScreen(reason) {
+    renderHead();
+    render(`<div class="ptitle">Ton prénom ?</div><div class="psub">SALLE ${esc(CODE)}</div>
+      ${reason ? `<div class="ins" style="color:var(--orange)">${esc(reason)}</div>` : ''}
+      <input type="text" id="nm" maxlength="12" placeholder="Prénom" autocomplete="off" autocapitalize="words" style="text-align:center;font-size:32px">
+      <button class="btn primary big" id="go">C'EST MOI ▶</button>
+      <div class="ins">Ton prénom s'affichera sur l'écran. 12 caractères max, 3 joueurs par salle.</div>`);
+    const go = () => { const v = $('#nm').value.trim(); if (!v) return shake(); myName = v; SFX.select(); send({ t: 'join', name: v, token }); waitScreen('…', 'Connexion à la salle'); };
+    $('#go').onclick = go; $('#nm').onkeydown = e => { if (e.key === 'Enter') go(); };
+    setTimeout(() => $('#nm') && $('#nm').focus(), 150);
   }
   function waitScreen(big, msg) {
     render(`<div class="wait">${seat !== null ? avatar(seat, 'bounce', 'style="width:100px;height:100px"') : ''}<div class="big">${esc(big)}</div><div class="muted">${esc(msg || '')}</div></div>`);

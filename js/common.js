@@ -12,21 +12,28 @@ window.PJ = (function () {
   const $ = (sel, root) => (root || document).querySelector(sel);
   const $$ = (sel, root) => Array.from((root || document).querySelectorAll(sel));
 
-  /* ---------- avatars pixel ---------- */
+  /* ---------- avatars pixel : 6 visages, couleur du maillot = place (0,1,2) ---------- */
   const FACES = [
     ['..HHHHHH..', '.HHHHHHHH.', '.HSSSSSSH.', '.SSESSESS.', '.SSSSSSSS.', '.SBSMMSBS.', '..BBBBBB..', '...BBBB...', '.CCCCCCCC.', 'CCCCCCCCCC'],
     ['..HHHHHH..', '.HHHHHHHH.', 'HHSSSSSSHH', 'HHSESSESHH', 'HHSSSSSSHH', 'HHSSMMSSHH', 'HH.SSSS.HH', 'HH..SS..HH', '.CCCCCCCC.', 'CCCCCCCCCC'],
-    ['H.HH..HH.H', '.HHHHHHHH.', '.HSSSSSSH.', '.GEGSSGEG.', '.SSSSSSSS.', '.SSSMMSSS.', '..SSSSSS..', '...SSSS...', '.CCCCCCCC.', 'CCCCCCCCCC']
+    ['H.HH..HH.H', '.HHHHHHHH.', '.HSSSSSSH.', '.GEGSSGEG.', '.SSSSSSSS.', '.SSSMMSSS.', '..SSSSSS..', '...SSSS...', '.CCCCCCCC.', 'CCCCCCCCCC'],
+    ['..........', '...SSSS...', '..SSSSSS..', '.SSESSESS.', '.SSSSSSSS.', '.SSBBBBSS.', '..SSMMSS..', '...SSSS...', '.CCCCCCCC.', 'CCCCCCCCCC'],
+    ['....HH....', '...HHHH...', '..HHHHHH..', '.HSSSSSSH.', '.SSESSESS.', '.SSSSSSSS.', '.SSSMMSSS.', '..SSSSSS..', '.CCCCCCCC.', 'CCCCCCCCCC'],
+    ['..KKKKKK..', '.KKKKKKKK.', 'KKKKKKKKKK', '.SSSSSSSS.', '.SSESSESS.', '.SSSSSSSS.', '.SSSMMSSS.', '..SSSSSS..', '.CCCCCCCC.', 'CCCCCCCCCC']
   ];
-  const PAL = [
-    { H: '#3b2a1e', B: '#2a1d14', S: '#f2c6a0', E: '#111', M: '#c0392b', G: '#222', C: COLORS[0] },
-    { H: '#5a2d82', B: '#2a1d14', S: '#f6d2b5', E: '#111', M: '#ff2e7e', G: '#222', C: COLORS[1] },
-    { H: '#d9a21b', B: '#2a1d14', S: '#e8b98f', E: '#111', M: '#c0392b', G: '#1a1a1a', C: COLORS[2] }
+  const FACE_PAL = [
+    { H: '#3b2a1e', B: '#2a1d14', S: '#f2c6a0', E: '#111', M: '#c0392b', G: '#222' },
+    { H: '#5a2d82', B: '#2a1d14', S: '#f6d2b5', E: '#111', M: '#ff2e7e', G: '#222' },
+    { H: '#d9a21b', B: '#2a1d14', S: '#e8b98f', E: '#111', M: '#c0392b', G: '#1a1a1a' },
+    { H: '#000', B: '#3b2a1e', S: '#c68642', E: '#111', M: '#8e2a2a', G: '#222' },
+    { H: '#1a1a1a', B: '#2a1d14', S: '#f0c8a8', E: '#111', M: '#d6336c', G: '#222' },
+    { H: '#000', B: '#2a1d14', S: '#8d5524', E: '#111', M: '#7a1f1f', G: '#222', K: '#e63946' }
   ];
-  function avatar(i, cls, extra) {
-    const face = FACES[i % 3], pal = PAL[i % 3];
+  const FACE_NAMES = ['La barbe', 'Les cheveux longs', 'Les lunettes', 'La moustache', 'Le chignon', 'Le bonnet'];
+  function avatar(face, seat, cls, extra) {
+    const f = FACES[(face || 0) % FACES.length], pal = Object.assign({}, FACE_PAL[(face || 0) % FACES.length], { C: COLORS[(seat || 0) % 3] });
     let r = '';
-    face.forEach((row, y) => row.split('').forEach((ch, x) => { if (ch !== '.') r += `<rect x="${x}" y="${y}" width="1" height="1" fill="${pal[ch]}"/>`; }));
+    f.forEach((row, y) => row.split('').forEach((ch, x) => { if (ch !== '.') r += `<rect x="${x}" y="${y}" width="1" height="1" fill="${pal[ch]}"/>`; }));
     return `<span class="av ${cls || ''}" ${extra || ''}><svg viewBox="0 0 10 10">${r}</svg></span>`;
   }
 
@@ -66,5 +73,5 @@ window.PJ = (function () {
     return o;
   }
 
-  return { COLORS, esc, rnd, shuffle, others, sleep, $, $$, avatar, SFX, peerOpts, peerParam };
+  return { COLORS, esc, rnd, shuffle, others, sleep, $, $$, avatar, FACES, FACE_NAMES, SFX, peerOpts, peerParam };
 })();

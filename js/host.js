@@ -11,7 +11,7 @@
 
   /* ---------- état persistant ---------- */
   const defaultState = () => ({
-    players: ['Steven', 'Jade', 'Lionel'], scores: [0, 0, 0], hot: false, sound: true,
+    players: ['', '', ''], scores: [0, 0, 0], hot: false, sound: true,
     turn: { cinq: 0, tete: 0 },
     used: { qui: [], cinq: [], tete: [], prefere: [] },
     custom: { qui: [], cinq: [], tete: [], prefere: [] },
@@ -24,7 +24,7 @@
   }
   function save() { try { localStorage.setItem(LS, JSON.stringify(S)); } catch (e) { } }
   SFX.setOn(S.sound);
-  const P = i => S.players[i];
+  const P = i => S.players[i] || ('Joueur ' + (i + 1));
 
   function draw(game) {
     const base = D[game];
@@ -66,24 +66,31 @@
     peer.on('connection', conn => {
       conn.on('data', m => onData(conn, m));
       conn.on('close', () => { const i = conns.indexOf(conn); if (i >= 0) { conns[i] = null; renderSide(); if (screenName === 'lobby') lobby(); toast(P(i) + ' a lâché sa manette'); } });
-      conn.on('open', () => conn.send({ t: 'lobby', names: S.players, scores: S.scores, taken: [0, 1, 2].filter(online) }));
+      conn.on('open', () => conn.send({ t: 'lobby', names: S.players, scores: S.scores, online: [0, 1, 2].filter(online) }));
     });
   }
   function onData(conn, m) {
     if (!m || !m.t) return;
     if (m.t === 'join') {
-      let seat = m.seat;
-      if (seat !== null && seat !== undefined && !(online(seat) && tokens[seat] !== m.token)) {
-        // place libre, ou même téléphone qui revient
-        if (conns[seat] && conns[seat] !== conn) { try { conns[seat].close(); } catch (e) { } }
-        conns[seat] = conn; tokens[seat] = m.token;
-        conn.send({ t: 'seat', ok: true, seat, names: S.players, scores: S.scores });
-        SFX.join(); renderSide(); if (screenName === 'lobby') lobby();
-        // il revient en cours de partie : on lui renvoie ce qu'on attend de lui
-        if (pending[seat]) conn.send(Object.assign({ t: 'prompt' }, pending[seat].prompt, { id: pending[seat].id, names: S.players, scores: S.scores }));
-      } else {
-        conn.send({ t: 'seat', ok: false, taken: [0, 1, 2].filter(online), names: S.players, scores: S.scores });
+      const name = String(m.name || '').trim().slice(0, 12);
+      let seat = tokens.indexOf(m.token);                       // même téléphone qui revient
+      if (seat >= 0 && online(seat) && conns[seat] !== conn) { try { conns[seat].close(); } catch (e) { } conns[seat] = null; }
+      if (seat < 0 && name) {
+        const lower = name.toLowerCase();
+        const dup = [0, 1, 2].find(i => online(i) && (S.players[i] || '').toLowerCase() === lower);
+        if (dup !== undefined) { conn.send({ t: 'seat', ok: false, reason: 'Ce prénom est déjà pris sur une autre manette.', names: S.players, scores: S.scores }); return; }
+        seat = [0, 1, 2].find(i => !online(i) && (S.players[i] || '').toLowerCase() === lower);   // reprend sa place après un reload de l'écran
+        if (seat === undefined) seat = [0, 1, 2].find(i => !online(i) && !S.players[i]);            // place vide
+        if (seat === undefined) seat = [0, 1, 2].find(i => !online(i));                             // place libérée par quelqu'un d'autre
+        if (seat === undefined) { conn.send({ t: 'seat', ok: false, reason: 'La salle est pleine (3 joueurs max).', names: S.players, scores: S.scores }); return; }
       }
+      if (seat < 0 || seat === undefined) { conn.send({ t: 'seat', ok: false, reason: 'Dis-nous ton prénom.', names: S.players, scores: S.scores }); return; }
+      if (name) S.players[seat] = name;
+      conns[seat] = conn; tokens[seat] = m.token; save();
+      conn.send({ t: 'seat', ok: true, seat, names: S.players, scores: S.scores });
+      SFX.join(); renderSide(); if (screenName === 'lobby') lobby();
+      // il revient en cours de partie : on lui renvoie ce qu'on attend de lui
+      if (pending[seat]) conn.send(Object.assign({ t: 'prompt' }, pending[seat].prompt, { id: pending[seat].id, names: S.players, scores: S.scores }));
       return;
     }
     if (m.t === 'in') {
@@ -130,7 +137,17 @@
     });
   }
   let tvKey = null, abortHooks = [];
-  function abortGame() { gen++; tvKey = null; abortHooks.forEach(h => { try { h(); } catch (e) { } }); abortHooks = []; [0, 1, 2].forEach(i => { pending[i] = null; setBadge(i, ''); }); clearPads('BORNE', 'Steven choisit un jeu…'); $('#tv').classList.remove('alarm'); }
+  function abortGame() { gen++; tvKey = null; abortHooks.forEach(h => { try { h(); } catch (e) { } }); abortHooks = []; [0, 1, 2].forEach(i => { pending[i] = null; setBadge(i, ''); }); clearPads('BORNE', 'Choix du jeu en cours…'); $('#tv').classList.remove('alarm'); }
+
+  /** Nouvelle soirée : nouveaux joueurs, scores et titres à zéro, manettes renvoyées à l'écran prénom. */
+  function newNight(ask) {
+    if (ask !== false && !confirm('Nouvelle soirée ? Les joueurs, les scores et les titres repartent de zéro.')) return;
+    abortGame();
+    [0, 1, 2].forEach(i => { sendTo(i, { t: 'kick', msg: 'Nouvelle soirée ! Retape ton prénom pour rejouer.' }); tokens[i] = null; });
+    const d = defaultState(); S.players = d.players; S.scores = d.scores; S.stats = d.stats; S.turn = d.turn; save();
+    setTimeout(() => { conns.forEach(c => { try { c && c.close(); } catch (e) { } }); conns.fill(null); renderSide(); lobby(); }, 150);
+    SFX.back();
+  }
 
   /* ============================================================
      RENDU
@@ -171,14 +188,15 @@
       <div class="gname" style="color:var(--yellow)">SCANNEZ POUR PRENDRE UNE MANETTE</div>
       <div class="lobby">
         <div class="center"><div class="qrbox">${qrSVG(url, 4)}</div><div class="joinurl">${esc(url.replace(/^https?:\/\//, ''))}<b>CODE ${CODE}</b></div></div>
-        <div class="seats">${[0, 1, 2].map(i => `<div class="seat ${online(i) ? 'on' : ''}">${avatar(i, online(i) ? 'bounce' : '')}<div><div class="nm c${i}">${esc(P(i))}</div><div class="st">${online(i) ? '✓ CONNECTÉ' : 'EN ATTENTE…'}</div></div></div>`).join('')}
-          <div class="instr">${allOnline() ? 'TOUT LE MONDE EST LÀ !' : 'Chacun ouvre le lien sur son téléphone et choisit son prénom.'}</div>
+        <div class="seats">${[0, 1, 2].map(i => `<div class="seat ${online(i) ? 'on' : ''}">${avatar(i, online(i) ? 'bounce' : '')}<div><div class="nm c${i}">${online(i) ? esc(P(i)) : (S.players[i] ? esc(S.players[i]) : 'JOUEUR ' + (i + 1))}</div><div class="st">${online(i) ? '✓ CONNECTÉ' : (S.players[i] ? 'PAS ENCORE REVENU…' : 'EN ATTENTE…')}</div></div></div>`).join('')}
+          <div class="instr">${allOnline() ? 'TOUT LE MONDE EST LÀ !' : 'Chacun ouvre le lien sur son téléphone et tape son prénom.'}</div>
         </div>
       </div>
-      <div class="tvbtns"><button class="btn tvbtn primary big" id="golobby" ${allOnline() ? '' : 'disabled'}>${allOnline() ? 'ALLER À LA BORNE ▶' : 'EN ATTENTE DES 3 MANETTES'}</button><button class="btn tvbtn ghost" id="skiplobby">continuer quand même</button></div>
+      <div class="tvbtns"><button class="btn tvbtn primary big" id="golobby" ${allOnline() ? '' : 'disabled'}>${allOnline() ? 'ALLER À LA BORNE ▶' : 'EN ATTENTE DES 3 MANETTES'}</button><button class="btn tvbtn ghost" id="skiplobby">continuer quand même</button><button class="btn tvbtn ghost" id="newnight">👥 nouvelle soirée</button></div>
     `, 'les téléphones doivent être sur le même réseau ou avec de la 4G · ÉCHAP = borne');
     $('#golobby').onclick = () => { SFX.coin(); home(); };
     $('#skiplobby').onclick = () => { SFX.coin(); home(); };
+    $('#newnight').onclick = newNight;
     tvKey = () => { if (allOnline()) home(); };
   }
   function home() {
@@ -194,17 +212,17 @@
         <button class="gcard g4" data-g="g5"><span class="ico">⚖️</span><span><div class="gt">TU PRÉFÈRES ?</div><div class="gd">Dilemmes impossibles et prédictions.</div></span><span class="num">05</span></button>
         <button class="gcard" data-g="podium"><span class="ico">🏆</span><span><div class="gt">PODIUM</div><div class="gd">Classement et titres de la soirée.</div></span></button>
       </div>
-      <div class="tvbtns"><button class="btn tvbtn ghost" data-g="lobby">📱 MANETTES (${[0, 1, 2].filter(online).length}/3)</button><button class="btn tvbtn ghost" data-g="hot">${S.hot ? '🌶️ HOT : ON' : 'HOT : OFF'}</button><button class="btn tvbtn ghost" data-g="custom">✏️ NOS QUESTIONS</button><button class="btn tvbtn ghost" data-g="settings">⚙️ RÉGLAGES</button></div>
+      <div class="tvbtns"><button class="btn tvbtn ghost" data-g="lobby">📱 MANETTES (${[0, 1, 2].filter(online).length}/3)</button><button class="btn tvbtn ghost" data-g="hot">${S.hot ? '🌶️ HOT : ON' : 'HOT : OFF'}</button><button class="btn tvbtn ghost" data-g="custom">✏️ NOS QUESTIONS</button><button class="btn tvbtn ghost" data-g="settings">⚙️ RÉGLAGES</button><button class="btn tvbtn ghost" data-g="newnight">👥 NOUVELLE SOIRÉE</button></div>
     `, 'cliquez un jeu · les manettes peuvent aussi choisir');
     $$('[data-g]').forEach(b => b.onclick = () => go(b.dataset.g));
     // les téléphones peuvent choisir le jeu
     const opts = [['g1', '🎯 Qui de nous 3 ?'], ['g2', '⏱️ 5 secondes'], ['g3', '🤥 Menteur !'], ['g4', '🧠 Dans la tête de…'], ['g5', '⚖️ Tu préfères ?'], ['podium', '🏆 Podium']];
     const myGen = gen;
-    [0, 1, 2].forEach(s => { if (online(s)) ask(s, { kind: 'buttons', title: 'À LA BORNE', sub: 'Choisis un jeu (ou laisse Steven faire)', options: opts.map(o => ({ v: o[0], label: o[1] })), after: 'Regarde l\'écran.' }, true).then(v => { if (gen === myGen && screenName === 'home') go(v); }).catch(() => { }); });
+    [0, 1, 2].forEach(s => { if (online(s)) ask(s, { kind: 'buttons', title: 'À LA BORNE', sub: 'Choisis un jeu (ou laissez l\'écran décider)', options: opts.map(o => ({ v: o[0], label: o[1] })), after: 'Regarde l\'écran.' }, true).then(v => { if (gen === myGen && screenName === 'home') go(v); }).catch(() => { }); });
   }
   function go(g) {
     SFX.select();
-    const map = { g1: game1, g2: game2, g3: game3, g4: game4, g5: game5, podium, lobby, custom, settings, hot: () => { S.hot = !S.hot; save(); SFX.coin(); renderSide(); home(); } };
+    const map = { g1: game1, g2: game2, g3: game3, g4: game4, g5: game5, podium, lobby, custom, settings, newnight: () => newNight(), hot: () => { S.hot = !S.hot; save(); SFX.coin(); renderSide(); home(); } };
     if (!map[g]) return;
     if (['g1', 'g2', 'g3', 'g4', 'g5'].includes(g) && !allOnline()) { toast('Il manque des manettes : ' + [0, 1, 2].filter(i => !online(i)).map(P).join(', ')); shake(); }
     run(map[g]);
@@ -385,8 +403,9 @@
       <div class="label center">TITRES DE LA SOIRÉE</div>
       ${awards.length ? `<div class="awards">${awards.map(a => `<div class="award"><span class="ico">${a.t.icon}</span><span><div class="nm">${esc(a.t.name)}</div><div class="ds">${esc(a.t.desc)}</div></span>${avatar(a.who)}</div>`).join('')}</div>` : '<div class="instr">Jouez quelques manches pour débloquer des titres.</div>'}`);
     clearPads('🏆 PODIUM', 'Regarde l\'écran.');
-    const c = await tvChoice([{ label: 'RETOUR BORNE' }, { label: '🔄 NOUVELLE PARTIE (scores à zéro)', cls: 'ghost' }]);
+    const c = await tvChoice([{ label: 'RETOUR BORNE' }, { label: '🔄 SCORES À ZÉRO', cls: 'ghost' }, { label: '👥 NOUVELLE SOIRÉE', cls: 'ghost' }]);
     if (c === 1 && confirm('Remettre les scores et les titres à zéro ?')) { const d = defaultState(); S.scores = d.scores; S.stats = d.stats; S.turn = d.turn; save(); renderSide(); SFX.back(); }
+    if (c === 2) { newNight(); throw new Aborted(); }
   }
 
   /* ============================================================
@@ -394,7 +413,7 @@
      ============================================================ */
   let customTab = 'qui';
   const TABS = { qui: 'QUI DE NOUS 3', cinq: '5 SECONDES', tete: 'DANS LA TÊTE', prefere: 'TU PRÉFÈRES' };
-  const HINTS = { qui: 'Ex : Qui de nous a déjà pleuré devant Pékin Express ?', cinq: 'Ex : 3 surnoms qu\'on donne à Lionel', tete: 'Utilise {P} pour le prénom. Ex : Le pire achat de {P} ?', prefere: 'Sépare A et B par une barre |. Ex : Vivre chez Jade | Vivre chez Steven' };
+  const HINTS = { qui: 'Ex : Qui de nous a déjà pleuré devant Pékin Express ?', cinq: 'Ex : 3 surnoms qu\'on donne au plus petit du groupe', tete: 'Utilise {P} pour le prénom. Ex : Le pire achat de {P} ?', prefere: 'Sépare A et B par une barre |. Ex : Un mois sans sucre | Un mois sans sel' };
   async function custom() {
     const list = S.custom[customTab];
     show('custom', `<div class="gname">✏️ NOS QUESTIONS</div><div class="settings stack"><div class="muted">Vos private jokes, c'est là que ça devient drôle. Tout reste sur cet ordinateur.</div>
@@ -409,8 +428,8 @@
   }
   async function settings() {
     show('settings', `<div class="gname">⚙️ RÉGLAGES</div><div class="settings stack">
-      <div class="label">JOUEURS</div>${[0, 1, 2].map(i => `<div class="row">${avatar(i)}<input type="text" id="pn${i}" maxlength="12" value="${esc(P(i))}" autocomplete="off"></div>`).join('')}
-      <button class="btn primary" id="savenames">ENREGISTRER LES NOMS</button>
+      <div class="label">JOUEURS</div><div class="muted">${[0, 1, 2].map(i => `<span class="c${i}">${esc(P(i))}</span>`).join(' · ')} — les prénoms sont choisis sur les téléphones.</div>
+      <button class="btn primary" id="newnight">👥 NOUVELLE SOIRÉE (autres joueurs)</button>
       <div class="hr"></div>
       <div class="toggle"><span class="px sm">SON</span><button class="sw ${S.sound ? 'on' : ''}" id="swsound">${S.sound ? 'ON' : 'OFF'}</button></div>
       <div class="toggle"><span class="px sm">MODE HOT 🌶️</span><button class="sw ${S.hot ? 'on' : ''}" id="swhot">${S.hot ? 'ON' : 'OFF'}</button></div>
@@ -420,7 +439,7 @@
       <button class="btn ghost" id="rscores">🔄 SCORES ET TITRES À ZÉRO</button>
       <button class="btn ghost" id="rall" style="color:var(--red)">💣 TOUT EFFACER (y compris nos questions)</button>
       <div class="muted center">PETIT JUEGO WEB · zéro serveur, zéro tracking. Les téléphones parlent directement à cet écran (WebRTC).</div></div>`, 'ÉCHAP = retour borne');
-    $('#savenames').onclick = () => { [0, 1, 2].forEach(i => { const v = $('#pn' + i).value.trim(); if (v) S.players[i] = v; }); save(); SFX.coin(); renderSide(); [0, 1, 2].forEach(i => sendTo(i, { t: 'score' })); home(); };
+    $('#newnight').onclick = () => newNight();
     $('#swsound').onclick = () => { S.sound = !S.sound; SFX.setOn(S.sound); save(); settings(); };
     $('#swhot').onclick = () => { S.hot = !S.hot; save(); SFX.coin(); renderSide(); settings(); };
     $('#newroom').onclick = () => { CODE = genCode(); conns.forEach(c => { try { c && c.close(); } catch (e) { } }); openRoom(); lobby(); };
@@ -444,7 +463,7 @@
   document.addEventListener('click', () => SFX.ac(), { once: true });
 
   renderSide(); renderRoom();
-  show('boot', `<div class="sc centered"><div class="hero">PETIT <span class="neon">JUEGO</span></div><div class="instr">3 JOUEURS · 3 TÉLÉPHONES · 1 ÉCRAN</div><button class="btn primary big tvbtn blink" id="pressstart">PRESS START</button></div>`, 'cliquez PRESS START (ou Espace)');
+  show('boot', `<div class="sc centered"><div class="hero">PETIT <span class="neon">JUEGO</span></div><div class="instr">3 JOUEURS · 3 TÉLÉPHONES · 1 ÉCRAN<br>Un jeu pour apprendre à se connaître, sans pitié.</div><button class="btn primary big tvbtn blink" id="pressstart">PRESS START</button></div>`, 'cliquez PRESS START (ou Espace)');
   const boot = () => { SFX.coin(); tvKey = null; lobby(); };
   $('#pressstart').onclick = boot; tvKey = boot;
   openRoom();
