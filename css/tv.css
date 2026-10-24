@@ -156,3 +156,27 @@ body { font-size: 26px; }
   .badge { flex: 1; } .sidefoot { display: none; }
   .lobby { grid-template-columns: 1fr; }
 }
+
+/* ---------- ambiance, catégories, sets ---------- */
+.ambs { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; max-width: 900px; margin: 0 auto; width: 100%; }
+.ambiance { display: flex; align-items: center; gap: 14px; background: var(--panel); border: 3px solid var(--line); padding: 16px; cursor: pointer; text-align: left; color: var(--ink); box-shadow: 5px 5px 0 #000; }
+.ambiance:hover { transform: translate(-2px,-2px); box-shadow: 7px 7px 0 #000; }
+.ambiance .ico { font-size: 38px; width: 50px; text-align: center; }
+.ambiance .an { font-family: var(--pixel); font-size: 12px; }
+.ambiance .ad { color: var(--muted); font-size: 21px; line-height: 1; margin-top: 4px; }
+.ambiance.sel { border-color: #fff; background: var(--panel2); }
+.ambiance.inline { width: auto; padding: 10px 14px; }
+.catname { font-family: var(--pixel); font-size: 9px; color: var(--muted); letter-spacing: 1px; margin-top: 6px; }
+.gcard.glisse { border-color: var(--orange); }
+.gcard .gd { font-size: 19px; }
+.sips { font-family: var(--pixel); font-size: 11px; line-height: 1.9; color: var(--yellow); background: #2a2206; border: 2px solid var(--yellow); padding: 10px 14px; text-align: center; max-width: 760px; margin: 0 auto; width: 100%; }
+.scalebar { position: relative; height: 130px; margin: 20px auto 0; border-bottom: 4px solid var(--line); max-width: 900px; width: 100%; }
+.scalebar .scalev { position: absolute; bottom: 0; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; }
+.scalebar .scalev .av { width: 48px; height: 48px; }
+.scalebar .scalev b { font-family: var(--pixel); font-size: 14px; }
+.scalebar .scalev.seat { bottom: 62px; }
+.scalebar .scalev.seat b { color: var(--yellow); }
+.podium.small .step .av { width: 56px; height: 56px; }
+.podium.small .step.first .box { height: 70px; } .podium.small .step.second .box { height: 50px; } .podium.small .step.third .box { height: 34px; }
+.stmt.truth .arrow { font-family: var(--pixel); color: var(--muted); }
+.ko { font-size: clamp(44px, 6vw, 80px); }

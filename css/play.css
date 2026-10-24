@@ -1,5 +1,6 @@
 /* ============================================================
-   PETIT JUEGO WEB — manette (téléphone)
+   PETIT JUEGO WEB — coque de la manette (téléphone)
+   Les invites elles-mêmes sont stylées dans prompts.css.
    ============================================================ */
 body { min-height: 100dvh; }
 #pad { min-height: 100dvh; display: flex; flex-direction: column; max-width: 520px; margin: 0 auto; padding: max(12px, env(safe-area-inset-top)) 14px max(12px, env(safe-area-inset-bottom)); gap: 12px; }
@@ -11,31 +12,3 @@ body { min-height: 100dvh; }
 #padfoot { display: flex; align-items: center; gap: 8px; font-family: var(--pixel); font-size: 8px; color: var(--muted); }
 .dot { width: 10px; height: 10px; background: var(--red); display: inline-block; border: 2px solid #000; }
 .dot.on { background: var(--green); box-shadow: 0 0 8px var(--green); }
-.ptitle { font-size: 30px; line-height: 1.1; text-align: center; color: #fff; }
-.psub { font-family: var(--pixel); font-size: 9px; color: var(--muted); text-align: center; letter-spacing: 1px; }
-.pbtn { display: flex; align-items: center; gap: 14px; text-align: left; text-transform: none; font-family: var(--pixel); font-size: 13px; padding: 14px; background: var(--panel); }
-.pbtn .av { width: 44px; height: 44px; flex: none; }
-.pbtn.c0 { border-color: var(--p0); } .pbtn.c1 { border-color: var(--p1); } .pbtn.c2 { border-color: var(--p2); }
-.pbtn .me { font-size: 8px; color: var(--muted); margin-left: auto; }
-.wait { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; text-align: center; }
-.wait .big { font-family: var(--pixel); font-size: 16px; line-height: 1.5; }
-.lieopt { display: flex; align-items: center; gap: 8px; }
-.lieopt .mark { font-family: var(--pixel); font-size: 8px; padding: 12px 8px; border: 3px solid var(--line); background: var(--panel); color: var(--muted); cursor: pointer; flex: none; }
-.lieopt .mark.on { background: var(--red); color: #fff; border-color: #fff; }
-.ab { display: grid; gap: 10px; }
-.ab .opt { background: var(--panel); border: 3px solid var(--line); padding: 14px; font-size: 24px; text-align: center; cursor: pointer; color: var(--ink); font-family: var(--term); }
-.ab .opt.a { border-color: var(--neon); } .ab .opt.b { border-color: var(--pink); }
-.ab .opt.sel { background: #fff; color: #000; }
-.ab .opt .l { font-family: var(--pixel); font-size: 10px; display: block; margin-bottom: 6px; }
-.ab .opt.a .l { color: var(--neon); } .ab .opt.b .l { color: var(--pink); } .ab .opt.sel .l { color: #000; }
-.predrow { display: flex; align-items: center; gap: 8px; background: var(--panel); border: 2px solid var(--line); padding: 8px; }
-.predrow .av { width: 36px; height: 36px; flex: none; }
-.predrow .nm { font-family: var(--pixel); font-size: 10px; width: 70px; flex: none; }
-.predrow .mini { flex: 1; font-family: var(--pixel); font-size: 9px; padding: 10px 4px; border: 3px solid var(--line); background: #000; color: var(--muted); cursor: pointer; text-align: center; }
-.predrow .mini.on { background: #fff; color: #000; border-color: #fff; }
-.stmt { background: var(--panel); border: 3px solid var(--line); padding: 14px; font-size: 22px; cursor: pointer; color: var(--ink); text-align: left; width: 100%; font-family: var(--term); }
-.stmt:active { background: #fff; color: #000; }
-.shake { animation: shake .35s linear 1; }
-@keyframes shake { 0%,100%{transform:translate(0,0)} 20%{transform:translate(-5px,3px)} 40%{transform:translate(6px,-2px)} 60%{transform:translate(-4px,-4px)} 80%{transform:translate(3px,4px)} }
-.seatpick .taken { opacity: .35; pointer-events: none; }
-.ins { background: var(--panel); border: 2px solid var(--line); padding: 10px; color: var(--muted); font-size: 18px; }

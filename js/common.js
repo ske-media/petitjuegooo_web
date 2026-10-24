@@ -61,6 +61,7 @@ window.PJ = (function () {
     drum: () => tone(120, 0.08, 'square', 0.1),
     win: () => { [523, 659, 784, 1046].forEach((f, i) => tone(f, 0.18, 'square', 0.09, i * 0.12)); tone(1318, 0.5, 'square', 0.1, 0.5); },
     fail: () => { [392, 349, 311, 262].forEach((f, i) => tone(f, 0.22, 'triangle', 0.1, i * 0.18)); },
+    note: (f, d) => tone(f, d || 0.2, 'triangle', 0.12),
     fanfare: () => { [523, 523, 523, 659, 784, 659, 784, 1046].forEach((f, i) => tone(f, 0.16, 'square', 0.09, i * 0.14)); },
     setOn: v => { soundOn = v; }, isOn: () => soundOn, ac
   };

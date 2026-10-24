@@ -469,6 +469,61 @@ window.DATA = {
     ]
   },
 
+  /* ---------- ÉCHELLE DE 1 À 10 (traits) ---------- */
+  echelle: {
+    soft: ["radin", "jaloux", "flemmard", "susceptible", "bavard", "accro au téléphone", "bordélique", "dramatique", "gourmand", "romantique", "bon menteur", "aventureux", "rancunier", "têtu", "maniaque", "fêtard", "compétiteur", "anxieux", "naïf", "cultivé", "sportif", "drôle (selon toi)", "ponctuel", "généreux", "influençable", "nostalgique", "hypocondriaque", "courageux", "mauvais perdant", "sociable"],
+    hot: ["coquin", "exhibitionniste", "romantique au lit", "dragueur", "jaloux en amour", "bon embrasseur", "expérimenté", "dominant", "ouvert d'esprit (au lit)", "discret sur sa vie privée"]
+  },
+
+  /* ---------- POURCENTAGE ---------- */
+  pourcentage: {
+    soft: ["{P} déménage à l'étranger dans les 5 ans", "{P} finit la soirée en dansant sur la table", "{P} se marie avant 40 ans", "{P} a déjà menti ce soir", "{P} pleure devant un film cette semaine", "{P} oublie un anniversaire important cette année", "{P} adopte un animal dans l'année", "{P} change de métier dans les 3 ans", "{P} rate un avion dans sa vie", "{P} devient riche un jour", "{P} se fait tatouer un jour", "{P} survivrait à une semaine sans téléphone", "{P} fait un saut en parachute un jour", "{P} se fait virer d'un bar", "{P} gagne à un jeu télé", "{P} court un marathon", "{P} a déjà stalké un ex cette semaine", "{P} finit avec 3 chats", "{P} se perd dans une ville qu'il connaît", "{P} vit un jour à la campagne sans wifi", "{P} rappelle son ex après ce soir", "{P} monte une entreprise", "{P} chante au karaoké ce mois-ci", "{P} fait une crise de la quarantaine spectaculaire", "{P} apprend une nouvelle langue"],
+    hot: ["{P} embrasse quelqu'un ce week-end", "{P} a déjà envoyé un nude", "{P} a déjà fait l'amour en public", "{P} dit oui à un plan à trois", "{P} a déjà simulé", "{P} a un crush secret dans cette pièce", "{P} recouche avec un ex dans l'année", "{P} a déjà fait un rencard Tinder catastrophique", "{P} finit dans un club échangiste un jour", "{P} a déjà menti sur son nombre de partenaires"]
+  },
+
+  /* ---------- LE CONFESSIONNAL ---------- */
+  confession: {
+    soft: ["Un truc que tu n'as jamais avoué à personne ici", "Ta pire honte en soirée", "Un mensonge que tu as dit à un des deux autres", "Une chose que tu fais en cachette", "Le truc le plus gênant dans ton historique", "Un cadeau que tu as fait semblant d'aimer", "Un truc que tu as volé", "Un message que tu regrettes d'avoir envoyé", "Une chose que tu détestes mais que tout le monde adore", "Ta plus grosse peur ridicule", "Un truc que tu as cassé sans jamais le dire", "Une fois où tu as fait semblant d'être malade", "Ton plaisir coupable musical", "Un surnom secret que tu donnes à quelqu'un", "Un truc que tu n'as jamais compris mais que tu fais semblant de comprendre"],
+    hot: ["Un fantasme jamais avoué", "Le lieu le plus bizarre où tu l'as fait", "Un crush que personne ne connaît", "Un sexto envoyé à la mauvaise personne", "Un truc que tu n'oserais pas demander à ton ou ta partenaire", "La pire chose que tu as faite pour séduire", "Un rendez-vous dont tu t'es enfui", "Une nuit que tu regrettes"]
+  },
+
+  /* ---------- LE TESTAMENT ---------- */
+  testament: ["ta voiture (ou ton vélo)", "ton téléphone déverrouillé", "ton compte Netflix", "ton chat / ton chien (ou le futur)", "tes dettes", "ta collection la plus honteuse", "ton meilleur pull", "ta playlist", "ton canapé", "tes secrets", "ton compte Instagram", "ta console", "ton carnet d'adresses", "ta cave à vin (ou ton frigo)", "ton ex", "tes photos de vacances", "ton abonnement à la salle de sport", "ta recette signature", "ton lit", "ta réputation"],
+
+  /* ---------- LA FAUSSE DÉFINITION ---------- */
+  mots: [
+    ["Callipyge", "Qui a de belles fesses"], ["Zinzolin", "Couleur violet rougeâtre"], ["Cacochyme", "Faible, maladif, décrépit"], ["Pandiculation", "Le fait de s'étirer en bâillant"], ["Apocope", "Suppression de la fin d'un mot (ciné pour cinéma)"], ["Sérendipité", "Trouver quelque chose par hasard en cherchant autre chose"], ["Nyctalope", "Qui voit la nuit"], ["Procrastiner", "Remettre toujours au lendemain"], ["Acrimonie", "Aigreur, mauvaise humeur dans les paroles"], ["Thuriféraire", "Flatteur, qui encense quelqu'un"], ["Gourgandine", "Femme de mauvaise vie (vieux)"], ["Ataraxie", "Tranquillité absolue de l'âme"], ["Coquecigrue", "Chose absurde, baliverne"], ["Hapax", "Mot qui n'apparaît qu'une seule fois dans un corpus"], ["Sapiteur", "Expert désigné pour évaluer la valeur d'un bien"], ["Ubiquité", "Le fait d'être partout à la fois"], ["Palimpseste", "Parchemin gratté pour écrire par-dessus"], ["Antépénultième", "Avant-avant-dernier"], ["Obséquieux", "Poli jusqu'à la servilité"], ["Vétilleux", "Qui s'attache à des détails sans importance"], ["Chafouin", "Sournois, à l'air rusé"], ["Dulcinée", "Femme aimée (par ironie)"], ["Logorrhée", "Flot de paroles interminable"], ["Escarcelle", "Grande bourse qu'on portait à la ceinture"], ["Truchement", "Intermédiaire, moyen"], ["Égrotant", "Qui est toujours un peu malade"], ["Smicard", "Personne payée au SMIC"], ["Lapalissade", "Vérité tellement évidente qu'elle en est ridicule"], ["Esbroufe", "Étalage, bluff pour impressionner"], ["Bicaméral", "Composé de deux chambres (parlement)"]
+  ],
+
+  /* ---------- LE DÉTECTEUR ---------- */
+  detecteur: [
+    "Ta ville de naissance ?", "Ton plat préféré ?", "Ton premier concert ?", "Le prénom de ton premier amour ?", "Ton âge à ton premier baiser ?", "Ton pire job ?", "Ta chanson de karaoké ?", "Ton animal préféré ?", "Ton dernier voyage ?", "Ton film préféré ?", "Un truc que tu collectionnes ?", "Ta plus grande peur ?", "Ton surnom enfant ?", "Ton sport à l'école ?", "Ta boisson de soirée ?", "La dernière série vue ?", "Ton heure de coucher ?", "Ton dessert préféré ?", "Ton pays de rêve ?", "Le nombre de pays visités ?", "Ton premier téléphone ?", "Ton objet fétiche ?", "Ta couleur préférée ?", "Un truc que tu rates toujours en cuisine ?", "Ton métier rêvé enfant ?"
+  ],
+
+  /* ---------- LE SLOGAN ---------- */
+  slogan: ["un parapluie pour chat", "des chaussettes connectées", "une app pour parler aux plantes", "un réveil qui t'insulte", "du dentifrice goût raclette", "une trottinette pour seniors", "un détecteur de mensonges pour couples", "des pantoufles de ski", "un grille-pain Bluetooth", "une assurance anti-râteau", "un GPS pour retrouver ses clés dans son propre sac", "un abonnement de câlins", "un coussin qui ronfle à ta place", "un déodorant pour pieds de randonneur", "une bière sans bière", "un casque anti-belle-mère", "une appli de rupture par SMS", "un sèche-cheveux pour chien", "un miroir qui ment", "une pizza carrée", "des lunettes qui floutent les ex", "un fauteuil de bureau pour sieste", "un parfum odeur de dimanche", "une montre qui ne donne pas l'heure", "un sac de couchage pour deux (sans fermeture)"],
+
+  /* ---------- LE JUGE SUPRÊME ---------- */
+  juge: {
+    soft: ["La meilleure excuse pour quitter une soirée", "Le pire nom pour un restaurant", "La phrase à dire à un alien qui débarque", "Le pire conseil à donner à un enfant", "Le titre de ton autobiographie", "La meilleure réponse à « on peut parler ? »", "Un nouveau commandement pour notre groupe", "Le message à laisser sur ton répondeur", "La pire chose à dire à un enterrement", "Un slogan pour la ville où on est", "Ce qu'il faut dire quand on se cogne le petit orteil", "Le premier mot d'un bébé qui te ressemble", "La meilleure raison de ne pas répondre à ta mère", "Un nom de groupe de rock pour nous trois", "Le pire cadeau de mariage", "La phrase à graver sur une plaque de rue à ton nom", "Le titre du film sur ta vie", "Le pire SMS à envoyer après un premier rendez-vous", "Ce qu'il faudrait écrire sur les paquets de chips", "La réponse parfaite à un recruteur qui demande ton plus gros défaut"],
+    hot: ["La pire phrase à dire pendant l'amour", "La meilleure excuse pour partir avant le petit-déjeuner", "Le nom de code d'un plan à trois", "Le pire surnom à donner au lit", "Le titre de ton film pour adultes", "La phrase la plus efficace pour draguer dans un ascenseur", "Ce qu'il faut dire quand on se fait surprendre"]
+  },
+
+  /* ---------- JAMAIS / TOUJOURS ---------- */
+  jamais: {
+    soft: ["Je n'ai jamais fait semblant d'aimer un cadeau", "Je n'ai jamais menti sur mon âge", "Je n'ai jamais pleuré au boulot", "Je n'ai jamais stalké un ex sur Instagram", "Je n'ai jamais triché à un examen", "Je n'ai jamais mangé un truc tombé par terre", "Je n'ai jamais fait pipi sous la douche", "Je n'ai jamais chanté sous la douche", "Je n'ai jamais fait semblant d'être malade", "Je n'ai jamais volé dans un magasin", "Je n'ai jamais renvoyé un plat au resto", "Je n'ai jamais lu les messages de quelqu'un d'autre", "Je n'ai jamais oublié un anniversaire important", "Je n'ai jamais dormi en cours ou en réunion", "Je n'ai jamais pleuré à cause d'un animal", "Je n'ai jamais menti à un des deux autres", "Je n'ai jamais envoyé un message à la mauvaise personne", "Je n'ai jamais mangé un dessert entier seul", "Je n'ai jamais rappelé un ex bourré", "Je n'ai jamais pris le métro sans ticket", "Je n'ai jamais parlé à un inconnu dans un avion", "Je n'ai jamais fait un karaoké", "Je n'ai jamais fait semblant de reconnaître quelqu'un", "Je n'ai jamais pleuré devant un dessin animé", "Je n'ai jamais fait une crise de nerfs à cause d'un jeu de société"],
+    hot: ["Je n'ai jamais couché le premier soir", "Je n'ai jamais envoyé un nude", "Je n'ai jamais fait l'amour dans un lieu public", "Je n'ai jamais simulé", "Je n'ai jamais embrassé deux personnes le même soir", "Je n'ai jamais fait un plan à trois", "Je n'ai jamais fait l'amour dans une voiture", "Je n'ai jamais eu un crush sur un ou une pote", "Je n'ai jamais flirté avec quelqu'un en couple", "Je n'ai jamais fait de rencontre en ligne", "Je n'ai jamais menti sur mon nombre de partenaires", "Je n'ai jamais fait l'amour chez mes parents (avec eux à la maison)", "Je n'ai jamais fait semblant de dormir pour éviter un câlin", "Je n'ai jamais regardé un film pour adultes en couple", "Je n'ai jamais eu un rendez-vous catastrophique", "Je n'ai jamais fait l'amour le jour d'un enterrement", "Je n'ai jamais pensé à quelqu'un d'autre pendant", "Je n'ai jamais utilisé un sex-toy", "Je n'ai jamais embrassé quelqu'un dans cette pièce", "Je n'ai jamais fait l'amour avec de la musique ringarde"]
+  },
+
+  /* ---------- LA PIRE PUNCHLINE DE DRAGUE ---------- */
+  punchline: ["au supermarché, rayon surgelés", "à un enterrement", "chez le dentiste, bouche ouverte", "dans un ascenseur en panne", "à la salle de sport", "au commissariat", "dans une file d'attente à la Poste", "à un mariage, à côté de la mariée", "en cours de yoga", "aux urgences", "chez le vétérinaire", "à un entretien d'embauche", "dans un parking souterrain", "à la piscine municipale", "au rayon papier toilette", "dans un avion qui décolle", "à la réunion parents-profs", "pendant un contrôle de police", "chez IKEA, rayon lits", "au tribunal", "dans un musée, devant un nu", "à la station-service", "à une soutenance de thèse", "dans un refuge de montagne", "à la caisse automatique qui bugue"],
+
+  /* ---------- ROAST GENTIL ---------- */
+  roast: ["son style vestimentaire", "sa façon de conduire", "sa cuisine", "ses goûts musicaux", "sa gestion de l'argent", "sa ponctualité", "ses photos Instagram", "ses ex", "sa façon de danser", "son sens de l'orientation", "sa manière de raconter une histoire", "son chez-lui", "sa voix au téléphone", "ses choix de séries", "son rire", "sa façon de manger", "ses excuses", "son sommeil", "sa relation avec son téléphone", "ses talents de bricoleur"],
+
+  /* ---------- SANCTIONS APÉRO ---------- */
+  sips: ["{P} boit une gorgée.", "{P} boit deux gorgées, sans discuter.", "{P} trinque et boit.", "{P} boit… et offre une gorgée à qui il veut.", "{P} finit son verre ? Non, juste une gorgée. Ouf.", "Une gorgée pour {P}, c'est la règle.", "{P} boit, et les autres se moquent."],
+
   /* ---------- TITRES DE FIN DE SOIRÉE ---------- */
   titles: [
     { key: "ko",       icon: "🎯", name: "LE PLUS DÉSIGNÉ",    desc: "Celui que tout le monde pointe du doigt.", mode: "max" },
@@ -479,6 +534,17 @@ window.DATA = {
     { key: "cinqOk",   icon: "🔥", name: "BOUCHE EN FEU",      desc: "Le roi du 5 secondes.",                  mode: "max" },
     { key: "cinqFail", icon: "🐢", name: "LA LANGUE QUI TRAÎNE", desc: "Le chrono, c'est pas son ami.",        mode: "max" },
     { key: "guessedOn",icon: "👻", name: "L'ÉNIGME",           desc: "Personne ne le cerne.",                  mode: "min" },
-    { key: "guessedOn",icon: "📖", name: "LE LIVRE OUVERT",    desc: "Tout le monde devine tout sur lui.",     mode: "max" }
-  ]
+    { key: "guessedOn",icon: "📖", name: "LE LIVRE OUVERT",    desc: "Tout le monde devine tout sur lui.",     mode: "max" },
+    { key: "reflex",   icon: "⚡", name: "LE RÉFLEXE",         desc: "Le plus rapide de la bande.",            mode: "max" },
+    { key: "votes",    icon: "🎤", name: "LE PUBLICITAIRE",    desc: "Ses punchlines récoltent les votes.",    mode: "max" },
+    { key: "sips",     icon: "🍻", name: "L'ÉPONGE",           desc: "A le plus bu ce soir.",                   mode: "max" }
+  ],
+
+  /* ---------- AMBIANCES ---------- */
+  ambiances: {
+    connaitre: { icon: "🧠", name: "SE CONNAÎTRE", desc: "Questions, aveux, prédictions. On apprend des trucs.", color: "var(--neon)" },
+    apero:     { icon: "🍻", name: "APÉRO",        desc: "Réflexes, défis, et celui qui perd boit.",         color: "var(--yellow)" },
+    glisse:    { icon: "🌶️", name: "ÇA GLISSE",    desc: "Questions épicées, aveux, zéro filtre.",            color: "var(--orange)" },
+    mix:       { icon: "🎲", name: "MIX",          desc: "Un peu de tout, en montant en intensité.",          color: "var(--pink)" }
+  }
 };
