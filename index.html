@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#07060f">
+  <title>PETIT JUEGO — écran de jeu</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/common.css">
+  <link rel="stylesheet" href="css/tv.css">
+</head>
+<body>
+  <div id="tv">
+    <header id="bar">
+      <div class="logo">PETIT <span class="neon">JUEGO</span></div>
+      <div id="room"></div>
+      <div class="barbtns">
+        <button class="ib" id="btnSound" title="son">♪</button>
+        <button class="ib" id="btnFull" title="plein écran">⛶</button>
+        <button class="ib" id="btnHome" title="retour borne (Échap)">⌂</button>
+      </div>
+    </header>
+    <aside id="side"></aside>
+    <main id="stage"></main>
+    <footer id="hint"></footer>
+  </div>
+  <div class="scanlines"></div>
+  <div class="vignette"></div>
+  <script src="js/vendor/peerjs.min.js"></script>
+  <script src="js/vendor/qrcode.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/common.js"></script>
+  <script src="js/host.js"></script>
+</body>
+</html>
